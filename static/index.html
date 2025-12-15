@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDI Engine Pro</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+
+<body>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-btn" data-theme="light" title="Light Theme">☀️</button>
+        <button class="theme-btn active" data-theme="dark" title="Dark Theme">🌙</button>
+        <button class="theme-btn" data-theme="purple" title="Purple Theme">💜</button>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🎵 MIDI Engine Pro</h1>
+                <div class="connection-status">
+                    <div class="status-indicator" id="connection-status">
+                        <div class="status-dot disconnected"></div>
+                        <span>Disconnected</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- Left Panel - Playlist Management -->
+            <section class="panel playlist-panel">
+                <div class="panel-header">
+                    <h2>📁 Playlist</h2>
+                    <div class="panel-actions">
+                        <button class="btn btn--sm btn--outline" id="clear-playlist">Clear All</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <!-- File Upload Area -->
+                    <div class="file-upload-area" id="file-upload">
+                        <div class="upload-content">
+                            <div class="upload-icon">🎼</div>
+                            <p class="upload-text">Drag & drop MIDI files here</p>
+                            <p class="upload-subtext">or <button class="upload-btn">browse files</button></p>
+                            <input type="file" id="file-input" accept=".mid,.midi" multiple hidden>
+                        </div>
+                    </div>
+
+                    <!-- Playlist -->
+                    <div class="playlist" id="playlist">
+                        <!-- Empty state -->
+                        <div class="empty-state" id="empty-state">
+                            <div class="empty-icon">🎹</div>
+                            <p>No MIDI files loaded</p>
+                            <p class="empty-subtext">Upload files to get started</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Panel - Playback Controls -->
+            <section class="panel playback-panel">
+                <div class="panel-header">
+                    <h2>🎮 Playback</h2>
+                </div>
+                <div class="panel-body">
+                    <!-- Current Track Info -->
+                    <div class="current-track-info">
+                        <div class="track-title" id="current-track">No track selected</div>
+                        <div class="track-meta" id="track-meta">Ready to play</div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-time">
+                            <span id="current-time">0:00</span>
+                            <span id="total-time">0:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Transport Controls -->
+                    <div class="transport-controls">
+                        <button class="btn btn--primary transport-btn" id="prev-btn" title="Previous Track">⏮️</button>
+                        <button class="btn btn--primary transport-btn" id="stop-btn" title="Stop">⏹️</button>
+                        <button class="btn btn--primary transport-btn large" id="play-pause-btn"
+                            title="Play/Pause">▶️</button>
+                        <button class="btn btn--primary transport-btn" id="skip-btn" title="Skip">⏭️</button>
+                        <button class="btn btn--primary transport-btn" id="next-btn" title="Next Track">⏭️</button>
+                    </div>
+
+                    <!-- Playback Settings -->
+                    <div class="playback-settings">
+                        <div class="setting-group">
+                            <label class="setting-label">Volume Multiplier</label>
+                            <div class="slider-container">
+                                <input type="range" id="velocity-slider" min="0" max="2" step="0.1" value="1"
+                                    class="slider">
+                                <span class="slider-value" id="velocity-value">1.0</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="setting-label">
+                                <input type="checkbox" id="gliss-toggle">
+                                <span class="checkbox-custom"></span>
+                                Glissando
+                            </label>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="setting-label">Playback Mode</label>
+                            <select class="form-control" id="playback-mode">
+                                <option value="single">Single Track</option>
+                                <option value="repeat-one">Repeat One</option>
+                                <option value="repeat-all">Repeat All</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel - Audio Processing & Status -->
+            <section class="panel audio-panel">
+                <div class="panel-header">
+                    <h2>🎛️ Audio Processing</h2>
+                </div>
+                <div class="panel-body">
+                    <!-- Master Controls -->
+                    <div class="master-controls">
+                        <div class="setting-group">
+                            <label class="setting-label">Master Volume</label>
+                            <div class="slider-container">
+                                <input type="range" id="master-volume" min="0" max="1" step="0.05" value="0.8"
+                                    class="slider">
+                                <span class="slider-value" id="master-volume-value">0.8</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Channel Mixer -->
+                    <div class="channel-mixer">
+                        <div class="mixer-header">
+                            <h3>Channel Mixer</h3>
+                            <button class="btn btn--sm btn--outline" id="reset-mixer">Reset</button>
+                        </div>
+                        <div class="channels-grid" id="channels-grid">
+                            <!-- Channels will be dynamically generated -->
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="system-status">
+                        <h3>System Status</h3>
+                        <div class="status-item">
+                            <span class="status-label">State:</span>
+                            <span class="status-value" id="system-state">Stopped</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Active Channels:</span>
+                            <span class="status-value" id="active-channels">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Panel - Event Log -->
+        <section class="panel event-log-panel">
+            <div class="panel-header">
+                <h2>📊 Event Log</h2>
+                <div class="panel-actions">
+                    <button class="btn btn--sm btn--outline" id="clear-log">Clear</button>
+                    <button class="btn btn--sm btn--outline" id="toggle-auto-scroll">
+                        <span id="auto-scroll-text">Auto-scroll: ON</span>
+                    </button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="event-log" id="event-log">
+                    <div class="event-item system">
+                        <span class="event-time">00:00:00</span>
+                        <span class="event-type">[SYSTEM]</span>
+                        <span class="event-message">MIDI Engine Pro initialized</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu hidden" id="context-menu">
+        <div class="context-item" data-action="play">▶️ Play</div>
+        <div class="context-item" data-action="remove">🗑️ Remove</div>
+        <div class="context-item" data-action="move-up">⬆️ Move Up</div>
+        <div class="context-item" data-action="move-down">⬇️ Move Down</div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal hidden" id="confirm-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--outline" id="modal-cancel">Cancel</button>
+                <button class="btn btn--primary" id="modal-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/app.js"></script>
+</body>
+
+</html>
